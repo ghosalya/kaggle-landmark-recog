@@ -15,8 +15,6 @@ def main(file, dir, start=0):
 		imgId = dataset["landmark_id"][i] + "-" + dataset["id"][i]
 		size += helper.getImage(imgId, dataset["url"][i], dir)
 		print("%s %s : %s" %(helper.getProgress(i, n, size), i, imgId))
-	print(">>> Log BEGIN")
-	print(">>> Log END")
 	print("########## END SCRIPT ##########")
 
 if __name__ == "__main__":

@@ -45,11 +45,14 @@ def getImage(id, link, dir):
 
 # getImage("blank","http://static.panoramio.com/photos/original/70761397.jpg","/run/media/dekatria/My Passport/")
 
-def getProgress(i, n, size):
+def getProgress(i, n, size=None):
 	total = float((i+1)/n)
 	percentage = round(100*total, 2)
-	mbSize = round(size/1048576, 2)
-	return "[ %s %% // %s MB]" %(percentage, mbSize)
+	if size:
+		mbSize = round(size/1048576, 2)
+		return "[ %s %% // %s MB]" %(percentage, mbSize)
+	else:
+		return "[ %s %% ]" %percentage
 
 # print(getProgress(52,823,getImage("blank","http://static.panoramio.com/photos/original/70761397.jpg","/run/media/dekatria/My Passport/")))
 
