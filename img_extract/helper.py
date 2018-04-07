@@ -6,10 +6,14 @@ import requests
 import time
 import matplotlib.pyplot as plt
 import shutil
+from PIL import Image
+import math
+import operator
+from functools import reduce
 
 def getImage(id, link, dir):
 	"""
-	requests image from link and saves at specified directory
+	PURPOSE: requests image from link and saves at specified directory
 	"""
 	try:
 		r = requests.get(link, stream=True)
@@ -32,7 +36,6 @@ def getImage(id, link, dir):
 					print(">>> Write FAILURE")
 					with open("./logs/missing_links.csv", "a") as output:
 						output.write("%s, %s, %s\n" %(time.time(),id,link))
-		pass
 	except Exception:
 		print(">>> Request FAILURE")
 		print("ERROR: Missing image at %s" % link)
@@ -46,6 +49,9 @@ def getImage(id, link, dir):
 # getImage("blank","http://static.panoramio.com/photos/original/70761397.jpg","/run/media/dekatria/My Passport/")
 
 def getProgress(i, n, size=None):
+	"""
+	PURPOSE: takes in current index in dataset and outputs script progress string.
+	"""
 	total = float((i+1)/n)
 	percentage = round(100*total, 2)
 	if size:
@@ -56,3 +62,22 @@ def getProgress(i, n, size=None):
 
 # print(getProgress(52,823,getImage("blank","http://static.panoramio.com/photos/original/70761397.jpg","/run/media/dekatria/My Passport/")))
 
+def compareImages(local, remote, threshold=None):
+	"""
+	PURPOSE: compares image from link with image stored locally and outputs boolean for similarity
+	"""
+	loc = Image.open(local).histogram()
+	try:
+		r = requests.get(remote, stream=True)
+		if r.status_code != 200:
+			return "Here"
+		else:
+			r.raw.decode_content = True
+			rem = Image.open(r.raw).histogram()
+			rms = math.sqrt(reduce(operator.add,
+				map(lambda a,b: (a-b)**2, loc, rem))/len(loc))
+			return rms
+	except Exception as ins:
+		print(ins)
+
+print(compareImages("/home/dekatria/Downloads/70761397.jpg","http://static.panoramio.com/photos/original/70761397.jpg"))
