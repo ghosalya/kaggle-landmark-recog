@@ -62,7 +62,7 @@ def getProgress(i, n, size=None):
 
 # print(getProgress(52,823,getImage("blank","http://static.panoramio.com/photos/original/70761397.jpg","/run/media/dekatria/My Passport/")))
 
-def compareImages(local, remote, threshold=None):
+def compareImages(local, remote, threshold=0.1):
 	"""
 	PURPOSE: compares image from link with image stored locally and outputs boolean for similarity
 	"""
@@ -70,14 +70,17 @@ def compareImages(local, remote, threshold=None):
 	try:
 		r = requests.get(remote, stream=True)
 		if r.status_code != 200:
-			return "Here"
+			return "unverified"
 		else:
 			r.raw.decode_content = True
 			rem = Image.open(r.raw).histogram()
 			rms = math.sqrt(reduce(operator.add,
 				map(lambda a,b: (a-b)**2, loc, rem))/len(loc))
-			return rms
+			if rms <= threshold:
+				return None
+			else:
+				return "incorrect"
 	except Exception as ins:
-		print(ins)
+		return "unverified"
 
-print(compareImages("/home/dekatria/Downloads/70761397.jpg","http://static.panoramio.com/photos/original/70761397.jpg"))
+# print(compareImages("/home/dekatria/Downloads/70761397.jpg","http://static.panoramio.com/photos/original/70761397.jpg"))
