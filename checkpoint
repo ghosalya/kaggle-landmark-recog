@@ -1,0 +1,4 @@
+model_checkpoint_path: "resnet_model_2_20180412_16:48.tfc-2"
+all_model_checkpoint_paths: "resnet_model_0_20180412_16:48.tfc-0"
+all_model_checkpoint_paths: "resnet_model_1_20180412_16:48.tfc-1"
+all_model_checkpoint_paths: "resnet_model_2_20180412_16:48.tfc-2"
