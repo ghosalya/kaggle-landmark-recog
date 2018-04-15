@@ -42,7 +42,6 @@ def main(dir, file_name, size=128, folds=10, sets=1):
 		
 		print(">>> Training resize END")
 
-		new_dataset_list = []
 		print(">>> Validation set resize BEGIN")
 		for file in valid:
 			source_file = dir + file 
