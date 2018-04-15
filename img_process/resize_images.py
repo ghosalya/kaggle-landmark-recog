@@ -11,9 +11,9 @@ import sys
 def main(dir, file_name, size=128, folds=10, sets=1):
 	print("########## START SCRIPT ##########")
 	data = pd.read_csv(file_name)
-	print(">>> Import SUCCESS")
 	outputName = "./data/resized/%s/" % size
 	fileList = data["file_name"].tolist()
+	print(">>> Import SUCCESS")
 	for i in range(int(sets)):
 		print(">>> Set %s BEGIN" % i)
 		if not os.path.exists("%sset-%s/train/" %(outputName, i)):
@@ -52,6 +52,7 @@ def main(dir, file_name, size=128, folds=10, sets=1):
 		print(">>> Validation resize END")
 
 		print(">>> Set %s END" % i)
+	print("########## END SCRIPT ##########")
 
 if __name__ == '__main__':
 	if len(sys.argv) == 4:
