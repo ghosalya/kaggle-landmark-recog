@@ -8,11 +8,10 @@ import helper
 import os
 import sys
 
-def main(dir, file_name, size=128, folds=10, sets=3):
+def main(dir, file_name, size=128, folds=10, sets=1):
 	print("########## START SCRIPT ##########")
 	data = pd.read_csv(file_name)
 	print(">>> Import SUCCESS")
-	new_dataset_list = []
 	outputName = "./data/resized/%s/" % size
 	fileList = data["file_name"].tolist()
 	for i in range(int(sets)):
@@ -24,20 +23,24 @@ def main(dir, file_name, size=128, folds=10, sets=3):
 		
 		train, valid = helper.binImages(fileList, int(folds))
 
+		print(">>> Training log BEGIN")
+		trainFile = data[data.file_name.isin(train)]
+		trainFile.to_csv("%sset-%s/training.csv" %(outputName, i), columns=["id", "landmark_id", "file_name"])
+		print(">>> Training log END")
+
+		print(">>> Validation log BEGIN")
+		validFile = data[data.file_name.isin(valid)]
+		validFile.to_csv("%sset-%s/validation.csv" %(outputName, i), columns=["id", "landmark_id", "file_name"])
+		print(">>> Validation log END")
+
 		print(">>> Training resize BEGIN")
 		for file in train:
 			source_file = dir + file 
 			dest_file = "%sset-%s/train/%s" %(outputName, i, file)
 			success = helper.resize_img(source_file, dest_file, size = int(size))
-			if success:
-				newrow = [dat["id"],  dat["landmark_id"], file]
-				new_dataset_list.append(newrow)
-
 			print("[SET %s // Training // %s %% ] %s processed" %(i, round((train.index(file)+1)/len(train)*100,2), file))
+		
 		print(">>> Training resize END")
-		newdata = pd.DataFrame(thelist, columns=("id","landmark_id","file_name"))
-		newdata.to_csv("./data/resized/set-%s/train.csv" % i)
-		print(">>> Training log SUCCESS")
 
 		new_dataset_list = []
 		print(">>> Validation set resize BEGIN")
@@ -45,16 +48,10 @@ def main(dir, file_name, size=128, folds=10, sets=3):
 			source_file = dir + file 
 			dest_file = "%sset-%s/valid/%s" %(outputName, i, file)
 			success = helper.resize_img(source_file, dest_file, size = int(size))
-			if success:
-				newrow = [dat["id"],  dat["landmark_id"], file]
-				new_dataset_list.append(newrow)
-
 			print("[SET %s // Validation // %s %% ] %s processed" %(i, round((valid.index(file)+1)/len(valid)*100,2), file))
 		
 		print(">>> Validation resize END")
-		newdata = pd.DataFrame(thelist, columns=("id","landmark_id","file_name"))
-		newdata.to_csv("./data/resized/set-%s/valid.csv" % i)
-		print(">>> Validation log SUCCESS")
+
 		print(">>> Set %s END" % i)
 
 if __name__ == '__main__':
