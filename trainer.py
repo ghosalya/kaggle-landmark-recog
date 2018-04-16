@@ -63,9 +63,11 @@ class Trainer():
         train_step = optimizer.minimize(loss)
         return optimizer, train_step
 
-    def adam_optimizer(self, loss, learning_rate=1.5e-4):
+    def adam_optimizer(self, loss, learning_rate=1e-3):
         # define Adam Optimizer - Seems to be much better
-        optimizer = tf.train.AdamOptimizer(learning_rate) 
+        optimizer = tf.train.AdamOptimizer(learning_rate,
+                                            beta1=0.8,
+                                            beta2=0.988) # faster decay 
         train_step = optimizer.minimize(loss)
         return optimizer, train_step
 
