@@ -40,7 +40,8 @@ class Trainer():
         return self.model(X, y, 
                           self.set_tensorboard_var, 
                           numclass=NUM_CLASSES,
-                          size=IMG_SIZE)
+                          size=IMG_SIZE,
+                          is_training=self.is_training)
 
     def set_tensorboard_var(self, name, var):
         '''

@@ -55,7 +55,7 @@ def get_dataset_length(dataset=DATASET_DEFAULT):
     '''
     simply returns length of dataset csv
     '''
-    data_csv = "./data/{}/train160.csv".format(dataset)
+    data_csv = "./data/{}/train.csv".format(dataset)
     df = pd.read_csv(data_csv)
     return len(df)
 
