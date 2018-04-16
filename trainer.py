@@ -36,7 +36,7 @@ class Trainer():
         self.train_slice = []
         self.val_slice = []
 
-    def get_model(self, X, y, saver=None):
+    def get_model(self, X, y):
         return self.model(X, y, 
                           self.set_tensorboard_var, 
                           numclass=NUM_CLASSES,
@@ -79,7 +79,7 @@ class Trainer():
 
         # get tensorflow model
         # saver = tf.train.Saver(var_list=[])
-        self.y_out = self.get_model(self.tfX, self.tfy, saver=None)
+        self.y_out = self.get_model(self.tfX, self.tfy)
         saver = tf.train.Saver()
         saver.restore(sess, filename)
         print(':==> Loading')
@@ -232,8 +232,8 @@ class Trainer():
                 # print every now and then
                 # if training_now and (iter_cnt % print_every) == 0:
                 if iter_cnt % 50 == 0 and training_now:
-                    print_tele("Iteration {0}: with minibatch training loss = {1:.3g} and accuracy of {2:.4g}"\
-                      .format(iter_cnt,loss,np.sum(corr)/actual_batch_size))
+                    print_tele("Iteration {0} of {3}: with minibatch training loss = {1:.3g} and accuracy of {2:.4g}"\
+                      .format(iter_cnt,loss,np.sum(corr)/actual_batch_size, iterr))
                 elif training_now:
                     print("Iteration {0}: with minibatch training loss = {1:.3g} and accuracy of {2:.4g}"\
                       .format(iter_cnt,loss,np.sum(corr)/actual_batch_size))
@@ -270,7 +270,7 @@ class Trainer():
 
 def main():
     # trainer = Trainer(model=resnet_model)
-    trainer = Trainer(model=vgg19_model)
+    trainer = Trainer(model=resnet_model)
     # saver = tf.train.Saver()
     with tf.Session(config=tf.ConfigProto(allow_soft_placement=True, 
                     log_device_placement=True)) as sess:
