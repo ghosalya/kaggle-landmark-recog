@@ -5,7 +5,7 @@ import cv2, os
 import pandas as pd 
 import numpy as np
 
-DATASET_DEFAULT = "128"
+DATASET_DEFAULT = "500"
 
 def get_dataset(dataset=DATASET_DEFAULT, batch=5000, index=None, val=False):
     '''
@@ -55,7 +55,7 @@ def get_dataset_length(dataset=DATASET_DEFAULT):
     '''
     simply returns length of dataset csv
     '''
-    data_csv = "./data/{}/train.csv".format(dataset)
+    data_csv = "./data/{}/train160.csv".format(dataset)
     df = pd.read_csv(data_csv)
     return len(df)
 

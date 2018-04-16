@@ -20,7 +20,7 @@ from model.vgg import vgg19_model
 
 # NUM_CLASSES = 14951
 NUM_CLASSES = 1323 # reflect the train160.csv
-IMG_SIZE = 128
+IMG_SIZE = 500
 
 class Trainer():
     def __init__(self, model=simple_model):
@@ -57,13 +57,13 @@ class Trainer():
             tf.summary.scalar('min', tf.reduce_min(var))
             tf.summary.histogram('histogram', var)
 
-    def sgd_optimizer(self, loss, learning_rate=2e-4):
+    def sgd_optimizer(self, loss, learning_rate=5e-4):
         # define SGD optimizer
         optimizer = tf.train.GradientDescentOptimizer(learning_rate) 
         train_step = optimizer.minimize(loss)
         return optimizer, train_step
 
-    def adam_optimizer(self, loss, learning_rate=1e-3):
+    def adam_optimizer(self, loss, learning_rate=1.5e-4):
         # define Adam Optimizer - Seems to be much better
         optimizer = tf.train.AdamOptimizer(learning_rate,
                                             beta1=0.8,
