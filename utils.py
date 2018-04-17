@@ -5,7 +5,7 @@ import cv2, os
 import pandas as pd 
 import numpy as np
 
-DATASET_DEFAULT = "500"
+DATASET_DEFAULT = "128"
 
 def get_dataset(dataset=DATASET_DEFAULT, batch=5000, index=None, val=False):
     '''
@@ -44,18 +44,21 @@ def get_data_csv(dataset, val=False):
     to give more control to trainer
     '''
     if val:
-        data_csv = "./data/{}/valid.csv".format(dataset)
+        data_csv = "./data/{}/validation.csv".format(dataset)
     else:
-        data_csv = "./data/{}/train.csv".format(dataset)
+        data_csv = "./data/{}/training.csv".format(dataset)
     df = pd.read_csv(data_csv)
     return df   
 
 
-def get_dataset_length(dataset=DATASET_DEFAULT):
+def get_dataset_length(dataset=DATASET_DEFAULT, val=False):
     '''
     simply returns length of dataset csv
     '''
-    data_csv = "./data/{}/train.csv".format(dataset)
+    if val:
+        data_csv = "./data/{}/validation.csv".format(dataset)
+    else:
+        data_csv = "./data/{}/training.csv".format(dataset)
     df = pd.read_csv(data_csv)
     return len(df)
 
@@ -66,7 +69,7 @@ def get_dataset_images(df, dataset=DATASET_DEFAULT, val=False):
     given the pandas dataframe
     (low-level implementation)
     '''
-    if val:
+    if False:#val:
         data_dir="./data/{}/valid/".format(dataset)
     else:
         data_dir="./data/{}/train/".format(dataset)

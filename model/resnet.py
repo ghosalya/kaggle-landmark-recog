@@ -108,7 +108,8 @@ def resnet_model(X, y, set_tensor, size=128, numclass=14951, is_training=True):
     # flat_dim = math.ceil((((size - 6) / 3) - 6) / 2)
     flat_dim = size 
     # flat_size = flat_dim**2 * 16 # 5148
-    flat_size = 512 * size // 8
+    flat_size = 512 * (size // 8)
+    # flat_size = 16*16*512
 
     W1 = tf.get_variable("W1", shape=[flat_size, numclass])
     b1 = tf.get_variable("b1", shape=[numclass])

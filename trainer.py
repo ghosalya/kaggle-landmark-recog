@@ -20,7 +20,7 @@ from model.vgg import vgg19_model
 
 # NUM_CLASSES = 14951
 NUM_CLASSES = 1323 # reflect the train160.csv
-IMG_SIZE = 500
+IMG_SIZE = 128
 
 class Trainer():
     def __init__(self, model=simple_model):
@@ -67,7 +67,7 @@ class Trainer():
     def adam_optimizer(self, loss, learning_rate=1.5e-4):
         # define Adam Optimizer - Seems to be much better
         optimizer = tf.train.AdamOptimizer(learning_rate,
-                                            beta1=0.8,
+                                            beta1=0.9,
                                             beta2=0.988) # faster decay 
         train_step = optimizer.minimize(loss)
         return optimizer, train_step
@@ -130,7 +130,7 @@ class Trainer():
 
         # run the model
         return self.run_model(sess, self.y_out, self.mean_loss,
-                       epochs=1, batch_size=250,training=train_step, 
+                       epochs=1, batch_size=500,training=train_step, 
                        tensorboard_writer=train_writer, 
                        # iterr=100,
                        overfit=overfit)
@@ -141,8 +141,9 @@ class Trainer():
         indicated by not having train_step
         '''
         # Xd, yd = get_dataset(batch=2000)
+        get_dataset_length(val=True)
         return self.run_model(sess, self.y_out, self.mean_loss, #Xd=Xd, yd=yd,
-                       epochs=1, batch_size=250, iterr=1000)
+                       epochs=1, batch_size=500)#, iterr=1000)
 
     def run_model(self, session, predict, loss_val, Xd=None, yd=None,
               epochs=1, batch_size=64, iterr=0,training=None, 
@@ -187,7 +188,7 @@ class Trainer():
             # keep track of accuracy
             correct = 0
             # set training & validation slices
-            self.setup_slices()
+            # self.setup_slices()
 
             # make sure we iterate over the dataset once
             total_data = 0
@@ -195,9 +196,10 @@ class Trainer():
                 if Xd is None:
                     if training_now:
                         # _Xd, _yd = get_dataset(batch=batch_size)
-                        idx = self.train_slice[i*batch_size: min((i+1)*batch_size,
-                                                                 len(self.train_slice))]
-                        _Xd, _yd = get_dataset(index=idx)
+                        # idx = self.train_slice[i*batch_size: min((i+1)*batch_size,
+                        #                                          len(self.train_slice))]
+                        idx = list(range(i*batch_size,min((i+1)*batch_size,self.data_len)))
+                        _Xd, _yd = get_dataset(index=idx, val=(not training_now))
                         if overfit:
                             Xd = _Xd
                             yd = _yd
@@ -243,9 +245,9 @@ class Trainer():
                       .format(iter_cnt,np.sum(corr)/actual_batch_size))
                 iter_cnt += 1
 
-                if loss == 0:
-                    print_tele('reaching 0 loss, breaking iteration')
-                    break
+                # if loss == 0:
+                #     print_tele('reaching 0 loss, breaking iteration')
+                #     break
                 
             total_correct = correct/total_data
             total_loss = np.sum(losses)/total_data
