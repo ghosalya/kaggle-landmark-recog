@@ -11,27 +11,36 @@ import sys
 def main(dir, file_name, size=128, folds=10, sets=1):
 	print("########## START SCRIPT ##########")
 	data = pd.read_csv(file_name)
-	print(">>> Import SUCCESS")
 	outputName = "./data/resized/%s/" % size
 	fileList = data["file_name"].tolist()
+	print(">>> Import SUCCESS")
 	for i in range(int(sets)):
 		print(">>> Set %s BEGIN" % i)
 		if not os.path.exists("%sset-%s/train/" %(outputName, i)):
 			os.makedirs("%sset-%s/train/" %(outputName, i))
-		if not os.path.exists("%sset-%s/validate/" %(outputName, i)):
-			os.makedirs("%sset-%s/validate/" %(outputName, i))
+		if not os.path.exists("%sset-%s/valid/" %(outputName, i)):
+			os.makedirs("%sset-%s/valid/" %(outputName, i))
 		
-		train, valid = helper.binImages(fileList, int(folds))
+		if folds == "train":
+			train = fileList
+			valid = []
+		if folds == "valid":
+			train = []
+			valid = fileList
+		else:
+			train, valid = helper.binImages(fileList, int(folds))
+			
+		if folds != "valid":
+			print(">>> Training log BEGIN")
+			trainFile = data[data.file_name.isin(train)]
+			trainFile.to_csv("%sset-%s/training.csv" %(outputName, i), columns=["id", "landmark_id", "file_name"])
+			print(">>> Training log END")
 
-		print(">>> Training log BEGIN")
-		trainFile = data[data.file_name.isin(train)]
-		trainFile.to_csv("%sset-%s/training.csv" %(outputName, i), columns=["id", "landmark_id", "file_name"])
-		print(">>> Training log END")
-
-		print(">>> Validation log BEGIN")
-		validFile = data[data.file_name.isin(valid)]
-		validFile.to_csv("%sset-%s/validation.csv" %(outputName, i), columns=["id", "landmark_id", "file_name"])
-		print(">>> Validation log END")
+		if folds != "train":
+			print(">>> Validation log BEGIN")
+			validFile = data[data.file_name.isin(valid)]
+			validFile.to_csv("%sset-%s/validation.csv" %(outputName, i), columns=["id", "landmark_id", "file_name"])
+			print(">>> Validation log END")
 
 		print(">>> Training resize BEGIN")
 		for file in train:
@@ -52,6 +61,7 @@ def main(dir, file_name, size=128, folds=10, sets=1):
 		print(">>> Validation resize END")
 
 		print(">>> Set %s END" % i)
+	print("########## END SCRIPT ##########")
 
 if __name__ == '__main__':
 	if len(sys.argv) == 4:
@@ -66,3 +76,4 @@ if __name__ == '__main__':
 		raise IndexError("Invalid number of parameters")
 
 # python img_process/resize_images.py "/run/media/dekatria/My Passport/kaggle_dataset/google_recognition/train/" "/home/dekatria/Documents/projects/201802.university.t7.computer_vision.project/kaggle-landmark-recog/logs/train80.csv" 500
+# python img_process/resize_images.py "/run/media/dekatria/My Passport/kaggle_dataset/google_recognition/train/" "/home/dekatria/Documents/projects/201802.university.t7.computer_vision.project/kaggle-landmark-recog/data/resized/500/set-0/validation.csv" 500 "valid"
